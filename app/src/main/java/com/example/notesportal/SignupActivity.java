@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,8 +26,9 @@ public class SignupActivity extends AppCompatActivity {
 
     private EditText firstname, lastname, username, email, password, confirmPassword;
     private Button btnSignup;
-
     private FirebaseFirestore db;
+
+    private static final String TAG = "SignupActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +36,17 @@ public class SignupActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_signup);
 
+        // Initialize Firebase
         FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
 
+        if (db == null) {
+            Log.e(TAG, "Firestore instance is null!");
+        } else {
+            Log.d(TAG, "Firestore initialized successfully");
+        }
+
+        // Bind views
         firstname = findViewById(R.id.inputFirstname);
         lastname = findViewById(R.id.inputLastname);
         username = findViewById(R.id.inputUsername);
@@ -47,10 +55,12 @@ public class SignupActivity extends AppCompatActivity {
         confirmPassword = findViewById(R.id.inputConfirmPassword);
         btnSignup = findViewById(R.id.btnSignup);
 
-        // Handle window insets
+        // Safe insets handling
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.signup_main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            if (v != null) {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            }
             return insets;
         });
 
@@ -65,6 +75,7 @@ public class SignupActivity extends AppCompatActivity {
         String pass = password.getText().toString().trim();
         String confirm = confirmPassword.getText().toString().trim();
 
+        // Basic validations
         if (TextUtils.isEmpty(first) || TextUtils.isEmpty(last) || TextUtils.isEmpty(user) ||
                 TextUtils.isEmpty(mail) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(confirm)) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
@@ -81,18 +92,22 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
+        // Check for existing email
         db.collection("users")
                 .whereEqualTo("email", mail)
                 .get()
                 .addOnSuccessListener(query -> {
                     if (!query.isEmpty()) {
                         Toast.makeText(this, "Email already exists", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Email already exists: " + mail);
                     } else {
                         createUser(first, last, user, mail, pass);
                     }
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error checking user", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error checking user", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error checking existing email", e);
+                });
     }
 
     private void createUser(String first, String last, String user, String mail, String pass) {
@@ -111,10 +126,12 @@ public class SignupActivity extends AppCompatActivity {
         db.collection("users").add(userData)
                 .addOnSuccessListener(ref -> {
                     Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-                    Log.d("Signup", "User added with ID: " + ref.getId());
+                    Log.d(TAG, "User added with ID: " + ref.getId());
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error creating account", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error creating account", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error creating user", e);
+                });
     }
 
     private String hashPassword(String password) {
@@ -127,7 +144,7 @@ public class SignupActivity extends AppCompatActivity {
             }
             return hex.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Log.e(TAG, "SHA-256 not supported", e);
             return password;
         }
     }
