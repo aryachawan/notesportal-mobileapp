@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Bg Image -->
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Container for logo slogan and btns -->
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- logo - notesportal -->
+        <TextView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="notesportal"
+            android:textStyle="bold"
+            android:textSize="72sp"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"/>
+
+        <!-- slogan -->
+        <TextView
+            android:id="@+id/slogan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="study smarter not harder"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:gravity="end"
+            android:layout_marginEnd="24dp"/>
+
+        <!-- Space / padding -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="48dp"/>
+
+        <!-- Sign Up Button -->
+        <Button
+            android:id="@+id/signupBtn"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:text="sign up"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/glass_button"/>
+
+        <!-- Already have an account -->
+        <TextView
+            android:id="@+id/alreadyAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Already have an account?"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Login Button -->
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:text="login"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:background="@drawable/glass_button"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

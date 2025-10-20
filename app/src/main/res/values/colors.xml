@@ -1,0 +1,8 @@
+<resources>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="purple_dark">#583DA1</color>
+    <color name="purple_light">#7B5FE1</color>
+    <color name="button_gradient_start">#7B5FE1</color>
+    <color name="button_gradient_end">#583DA1</color>
+</resources>
