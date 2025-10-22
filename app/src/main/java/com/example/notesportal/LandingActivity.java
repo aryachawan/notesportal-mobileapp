@@ -16,12 +16,17 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.graphics.Insets;
 
 public class LandingActivity extends AppCompatActivity {
-
+    private SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
+        sessionManager = new SessionManager(this);
+        if(sessionManager.isLoggedIn()){
+            startActivity(new Intent(LandingActivity.this, HomeActivity.class));
+            finish();
+        }
 
         // NOTESPORTAL DUAL COLOUR LOGO CODE
         TextView logo = findViewById(R.id.logo);

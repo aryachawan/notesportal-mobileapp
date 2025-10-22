@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -37,17 +38,9 @@ public class SignupActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_signup);
 
-        // Initialize Firebase
         FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
 
-        if (db == null) {
-            Log.e(TAG, "Firestore instance is null!");
-        } else {
-            Log.d(TAG, "Firestore initialized successfully");
-        }
-
-        // Bind views
         firstname = findViewById(R.id.inputFirstname);
         lastname = findViewById(R.id.inputLastname);
         username = findViewById(R.id.inputUsername);
@@ -56,7 +49,6 @@ public class SignupActivity extends AppCompatActivity {
         confirmPassword = findViewById(R.id.inputConfirmPassword);
         btnSignup = findViewById(R.id.btnSignup);
 
-        // Safe insets handling
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.signup_main), (v, insets) -> {
             if (v != null) {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -76,7 +68,6 @@ public class SignupActivity extends AppCompatActivity {
         String pass = password.getText().toString().trim();
         String confirm = confirmPassword.getText().toString().trim();
 
-        // Basic validations
         if (TextUtils.isEmpty(first) || TextUtils.isEmpty(last) || TextUtils.isEmpty(user) ||
                 TextUtils.isEmpty(mail) || TextUtils.isEmpty(pass) || TextUtils.isEmpty(confirm)) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
@@ -88,26 +79,37 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
+        if (!Patterns.EMAIL_ADDRESS.matcher(mail).matches()) {
+            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         if (!pass.equals(confirm)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check for existing email
-        db.collection("users")
-                .whereEqualTo("email", mail)
-                .get()
-                .addOnSuccessListener(query -> {
-                    if (!query.isEmpty()) {
-                        Toast.makeText(this, "Email already exists", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "Email already exists: " + mail);
-                    } else {
-                        createUser(first, last, user, mail, pass);
+        // CREATING USER AND CHECKING FOR SAME EMAIL AND USERNAME
+        db.collection("users").whereEqualTo("email",mail).get()
+                .addOnSuccessListener(emailQuery->{
+                    if(!emailQuery.isEmpty()){
+                        Toast.makeText(this,"Email already in use",Toast.LENGTH_SHORT).show();
+                    }else{
+                        db.collection("users").whereEqualTo("username",user).get()
+                                .addOnSuccessListener(userQuery->{
+                                    if(!userQuery.isEmpty()){
+                                        Toast.makeText(this,"Username already exists",Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        createUser(first,last,user,mail,pass);
+                                    }
+                                })
+                                .addOnFailureListener(e->{
+                                    Toast.makeText(this,"Error checking username",Toast.LENGTH_SHORT).show();
+                                });
                     }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error checking user", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error checking existing email", e);
+                }).addOnFailureListener(e->{
+                    Toast.makeText(this,"Error checking email-id",Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -134,6 +136,7 @@ public class SignupActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error creating account", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error creating user", e);
                 });
     }
 
