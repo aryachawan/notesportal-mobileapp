@@ -1,5 +1,6 @@
 package com.example.notesportal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -126,11 +127,13 @@ public class SignupActivity extends AppCompatActivity {
         db.collection("users").add(userData)
                 .addOnSuccessListener(ref -> {
                     Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "User added with ID: " + ref.getId());
+                    SessionManager sessionManager = new SessionManager(this);
+                    sessionManager.SaveSession(user,mail);
+                    startActivity(new Intent(SignupActivity.this, HomeActivity.class));
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error creating account", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error creating user", e);
                 });
     }
 
