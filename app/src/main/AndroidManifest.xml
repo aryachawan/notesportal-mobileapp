@@ -14,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Notesportal">
         <activity android:name=".SignupActivity"/>
+        <activity android:name=".LoginActivity"/>
         <activity
             android:name=".LandingActivity"
             android:exported="true">
