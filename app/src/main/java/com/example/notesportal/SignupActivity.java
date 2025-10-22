@@ -136,7 +136,6 @@ public class SignupActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error creating account", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error creating user", e);
                 });
     }
 
