@@ -5,7 +5,7 @@
     android:id="@+id/signup_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_2"
+    android:background="@drawable/bg_5"
     tools:context=".SignupActivity">
 
     <!-- Glass effect container -->
@@ -110,7 +110,7 @@
             android:id="@+id/btnSignup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="sign Up"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="@android:color/white"
